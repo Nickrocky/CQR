@@ -77,9 +77,11 @@ public class CQRWriter {
     private void applyData(BufferedImage image, List<PackageType> payload){
         int x = qr_size-1;
         int y = qr_size-1;
+        int index = 0;
         for(PackageType data : payload){
             System.out.println("X: " + x + " Y: " + y);
             image.setRGB(x, y, (data.getRGB().getRed()<<16 | data.getRGB().getGreen()<<8 | data.getRGB().getBlue()));
+            index++;
             if(x == 9 && y == 8) break;
             if(x == 9){
                 y--;
@@ -87,7 +89,19 @@ public class CQRWriter {
             }
             x--;
         }
-
+        y = qr_size-10;
+        x = 8;
+        for(int i = index; i < payload.size(); i++){
+            image.setRGB(x, y, (payload.get(i).getRGB().getRed()<<16 | payload.get(i).getRGB().getGreen()<<8 | payload.get(i).getRGB().getBlue()));
+            index++;
+            System.out.println("X: " + x + " Y: " + y);
+            if(x == 0 && y == 9) break;
+            if(x == 0){
+                y--;
+                x = 8;
+            }
+            x--;
+        }
 
     }
 

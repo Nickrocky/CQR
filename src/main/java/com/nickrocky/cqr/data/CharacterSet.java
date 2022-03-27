@@ -120,6 +120,7 @@ public enum CharacterSet {
 
     public static PackageType[] getPackageFromChar(String c){
         for(CharacterSet characterSet : CharacterSet.values()){
+            if(c.equalsIgnoreCase(";")) return new PackageType[]{CharacterSet.COMMA.getPrimary(), CharacterSet.COMMA.getSecondary()};
             if(characterSet.getValue().equalsIgnoreCase(c)){
                 return new PackageType[]{characterSet.getPrimary(), characterSet.getSecondary()};
             }
