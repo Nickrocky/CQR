@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static com.nickrocky.cqr.util.PackageType.*;
+
 @Getter
 
 public class CQRCode {
@@ -18,7 +20,7 @@ public class CQRCode {
 
     private int[] magenta_reference;
     private int[] yellow_reference;
-    private int[] cyan_reference;
+    private int[] cyan_reference, dark_magenta_reference, dark_cyan_reference, dark_yellow_reference, gray_reference, dark_red, dark_blue, dark_green;
     private CQRConfig config;
 
     public CQRCode(BufferedImage qrImage, int height, int width){
@@ -32,6 +34,14 @@ public class CQRCode {
         magenta_reference = rgbToCmyk(magenta);
         cyan_reference = rgbToCmyk(cyan);
         yellow_reference = rgbToCmyk(yellow);
+        dark_magenta_reference = rgbToCmyk(magenta);
+        dark_cyan_reference = rgbToCmyk(cyan);
+        dark_yellow_reference = rgbToCmyk(yellow);
+        gray_reference = new int[]{0,0,0,50};
+        dark_magenta_reference[3] = 50;
+        dark_cyan_reference[3] = 50;
+        dark_yellow_reference[3] = 50;
+
         colorInput = new PackageType[width][height];
         System.out.println("Magenta: " + magenta_reference[0] + " " + magenta_reference[1] + " "+ magenta_reference[2] + " " + magenta_reference[3]);
         System.out.println("Cyan: " + cyan_reference[0] + " " + cyan_reference[1] + " "+ cyan_reference[2] + " " + cyan_reference[3]);
@@ -68,32 +78,51 @@ public class CQRCode {
     }
 
     PackageType convertToPackage(int[] cmyk){
-        //todo add tolerance values for each color
-
-
         int cyan, magenta, yellow, key;
         cyan = cmyk[0];
         magenta = cmyk[1];
         yellow = cmyk[2];
-        key = 0;
+        key = cmyk[3];
 
         if(cmyk[0] <= 20) cyan = 0;
         if(cmyk[1] <= 20) magenta = 0;
         if(cmyk[2] <= 20) yellow = 0;
+        if(cmyk[3] >= 30) key = 50;
 
         System.out.println("Color: " + cyan + " " + magenta + " " + yellow);
 
-        if(cyan == magenta_reference[0] && magenta == magenta_reference[1] && yellow == magenta_reference[2]) return PackageType.MAGENTA;
-        if(cyan == cyan_reference[0] && magenta == cyan_reference[1] && yellow == cyan_reference[2]) return PackageType.CYAN;
-        if(cyan == yellow_reference[0] && magenta == yellow_reference[1] && yellow == yellow_reference[2]) return PackageType.YELLOW;
+        if(cyan == magenta_reference[0] && magenta == magenta_reference[1] && yellow == magenta_reference[2]){
+            if(key == 50) return DARK_MAGENTA;
+            return PackageType.MAGENTA;
+        }
+        if(cyan == cyan_reference[0] && magenta == cyan_reference[1] && yellow == cyan_reference[2]){
+            if(key == 50) return DARK_CYAN;
+            return PackageType.CYAN;
+        }
+        if(cyan == yellow_reference[0] && magenta == yellow_reference[1] && yellow == yellow_reference[2]){
+            if(key == 50) return DARK_YELLOW;
+            return PackageType.YELLOW;
+        }
         //green
-        if(cyan == cyan_reference[0] && magenta == yellow_reference[1] && yellow == yellow_reference[2]) return PackageType.GREEN;
+        if(cyan == cyan_reference[0] && magenta == yellow_reference[1] && yellow == yellow_reference[2]){
+            if(key == 50) return DARK_GREEN;
+            return PackageType.GREEN;
+        }
         //blue
-        if(cyan == cyan_reference[0] && magenta == magenta_reference[1] && yellow == magenta_reference[2]) return PackageType.BLUE;
+        if(cyan == cyan_reference[0] && magenta == magenta_reference[1] && yellow == magenta_reference[2]){
+            if(key == 50) return DARK_BLUE;
+            return PackageType.BLUE;
+        }
         //red
-        if(cyan == magenta_reference[0] && magenta == magenta_reference[1] && yellow == yellow_reference[2]) return PackageType.RED;
+        if(cyan == magenta_reference[0] && magenta == magenta_reference[1] && yellow == yellow_reference[2]){
+            if(key == 50) return DARK_RED;
+            return PackageType.RED;
+        }
         //white
-        if(cyan == 0 && magenta == 0 && yellow == 0) return PackageType.WHITE;
+        if(cyan == 0 && magenta == 0 && yellow == 0){
+            if(key == 50) return GRAY;
+            return PackageType.WHITE;
+        }
         if(cyan != 0 && magenta != 0 && yellow != 0) System.out.println("Misread color: " + cmyk[0] + " " + cmyk[1] + " " + cmyk[2] + " " + cmyk[3]);
         return PackageType.BLACK;
     }
