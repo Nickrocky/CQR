@@ -94,7 +94,7 @@ public class CQRWriter {
         for(int i = index; i < payload.size(); i++){
             image.setRGB(x, y, (payload.get(i).getRGB().getRed()<<16 | payload.get(i).getRGB().getGreen()<<8 | payload.get(i).getRGB().getBlue()));
             index++;
-            System.out.println("X: " + x + " Y: " + y);
+            //System.out.println("X: " + x + " Y: " + y);
             if(x == 0 && y == 9) break;
             if(x == 0){
                 y--;
@@ -102,6 +102,21 @@ public class CQRWriter {
             }
             x--;
         }
+
+        y = 8;
+        x = qr_size - 8;
+        for(int i = index; i < payload.size(); i++){
+            image.setRGB(x, y, (payload.get(i).getRGB().getRed()<<16 | payload.get(i).getRGB().getGreen()<<8 | payload.get(i).getRGB().getBlue()));
+            index++;
+            System.out.println("X: " + x + " Y: " + y);
+            if(x == 9 && y == 0) break;
+            if(x == 9){
+                y--;
+                x = qr_size - 8;
+            }
+            x--;
+        }
+
 
     }
 
