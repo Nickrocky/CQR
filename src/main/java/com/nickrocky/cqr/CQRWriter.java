@@ -63,6 +63,8 @@ public class CQRWriter {
         brandNewQRCode = new BufferedImage(qr_size, qr_size, BufferedImage.TYPE_INT_RGB);
 
         File file = null;
+        //Set the encoding mode
+        brandNewQRCode.setRGB(0, 8, (MAGENTA.getRGB().getRed()<<16 | MAGENTA.getRGB().getGreen()<<8 | MAGENTA.getRGB().getBlue()));
         applyBaseline(brandNewQRCode);
         applyData(brandNewQRCode, payloadInPackageTypes);
         try{
@@ -79,7 +81,7 @@ public class CQRWriter {
         int y = qr_size-1;
         int index = 0;
         for(PackageType data : payload){
-            System.out.println("X: " + x + " Y: " + y);
+            System.out.println("X: " + x + " Y: " + y + "");
             image.setRGB(x, y, (data.getRGB().getRed()<<16 | data.getRGB().getGreen()<<8 | data.getRGB().getBlue()));
             index++;
             if(x == 9 && y == 8) break;

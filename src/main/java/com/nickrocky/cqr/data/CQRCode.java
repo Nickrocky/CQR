@@ -6,8 +6,12 @@ import com.nickrocky.cqr.util.PackageType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
+
 
 import static com.nickrocky.cqr.util.PackageType.*;
 
@@ -16,6 +20,7 @@ import static com.nickrocky.cqr.util.PackageType.*;
 public class CQRCode {
 
     private PackageType[][] colorInput;
+    private List<PackageType> payload;
     private final int height, width;
 
     private int[] magenta_reference;
@@ -46,17 +51,51 @@ public class CQRCode {
         System.out.println("Magenta: " + magenta_reference[0] + " " + magenta_reference[1] + " "+ magenta_reference[2] + " " + magenta_reference[3]);
         System.out.println("Cyan: " + cyan_reference[0] + " " + cyan_reference[1] + " "+ cyan_reference[2] + " " + cyan_reference[3]);
         System.out.println("Yellow: " + yellow_reference[0] + " " + yellow_reference[1] + " "+ yellow_reference[2] + " " + yellow_reference[3]);
-        for(int x = 0; x < qrImage.getWidth(); x++){
-            for(int y = 0; y < qrImage.getHeight(); y++){
+        for(int y = 0; y < qrImage.getHeight(); y++){
+            for(int x = 0; x < qrImage.getWidth(); x++){
                 Color color = new Color(qrImage.getRGB(x,y));
                 colorInput[x][y] = convertToPackage(rgbToCmyk(color));
             }
         }
-
         this.height = height;
         this.width = width;
+        payload = readInput(qrImage);
+
         config = new CQRConfig(colorInput, width);
 
+    }
+
+    private List<PackageType> readInput(BufferedImage image){
+        List<PackageType> data = new ArrayList<>();
+        for(int y = height-1; y > 9; y--){
+            for(int x = width-1; x > 10; x--){
+                //System.out.println("X: " + x + " Y: " + y);
+                Color color = new Color(image.getRGB(x,y));
+                PackageType p = convertToPackage(rgbToCmyk(color));
+                data.add(p);
+                //System.out.println("X: " + x + " Y: " + y + " " + p.name());
+            }
+        }
+        for(int y = height-1; y > 8; y--){
+            for(int x = 8; x > 9; x--){
+                Color color = new Color(image.getRGB(x,y));
+                PackageType p = convertToPackage(rgbToCmyk(color));
+                data.add(p);
+                //System.out.println("X: " + x + " Y: " + y + " " + p.name());
+            }
+
+
+        }
+        for(int y = width-10; y > 9; y--){
+            for(int x = 8; x > 0; x--){
+                Color color = new Color(image.getRGB(x,y));
+                PackageType p = convertToPackage(rgbToCmyk(color));
+                data.add(p);
+                //System.out.println("X: " + x + " Y: " + y + " " + p.name());
+            }
+        }
+
+        return data;
     }
 
     private int[] rgbToCmyk(Color color) {
@@ -87,9 +126,18 @@ public class CQRCode {
         if(cmyk[0] <= 20) cyan = 0;
         if(cmyk[1] <= 20) magenta = 0;
         if(cmyk[2] <= 20) yellow = 0;
-        if(cmyk[3] >= 30) key = 50;
+        if(cmyk[3] > 50 && cmyk[3] <=80){
+            key = 75;
+        }else{
+            if(key >= 30 && key < 50){
+                key = 50;
+            }else{
+                key = 0;
+            }
+        }
+        //if(cmyk[3] >= 30) key = 50;
 
-        System.out.println("Color: " + cyan + " " + magenta + " " + yellow);
+        System.out.println("Color: " + cyan + " " + magenta + " " + yellow + " " + key);
 
         if(cyan == magenta_reference[0] && magenta == magenta_reference[1] && yellow == magenta_reference[2]){
             if(key == 50) return DARK_MAGENTA;
@@ -121,9 +169,10 @@ public class CQRCode {
         //white
         if(cyan == 0 && magenta == 0 && yellow == 0){
             if(key == 50) return GRAY;
+            if(key == 75) return DARK_GRAY;
             return PackageType.WHITE;
         }
-        if(cyan != 0 && magenta != 0 && yellow != 0) System.out.println("Misread color: " + cmyk[0] + " " + cmyk[1] + " " + cmyk[2] + " " + cmyk[3]);
+        if(cyan != 100 && magenta != 100 && yellow != 100) System.out.println("Misread color: " + cmyk[0] + " " + cmyk[1] + " " + cmyk[2] + " " + cmyk[3]);
         return PackageType.BLACK;
     }
 

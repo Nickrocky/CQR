@@ -17,6 +17,7 @@ public class CQRConfig {
         this.colors = colors;
         this.size = size;
         scheme = EncodingScheme.getEncoding(colors[0][8]);
+        System.out.println("Encoding Scheme is : " + scheme.name());
     }
 
     public void validate() throws InvalidCQRException{

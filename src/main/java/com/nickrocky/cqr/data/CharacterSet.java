@@ -102,7 +102,8 @@ public enum CharacterSet {
     ORG(91, ".org", (byte) 0b00111011, DARK_MAGENTA, DARK_GREEN),
     EDU(93, ".edu", (byte) 0b00111101, DARK_MAGENTA, BLUE),
     IO(94, ".io", (byte) 0b00111110, DARK_MAGENTA, DARK_BLUE),
-    SPACE(95, " ", (byte) 0b00111111, DARK_MAGENTA, DARK_GRAY)
+    SPACE(95, " ", (byte) 0b00111111, DARK_MAGENTA, DARK_GRAY),
+    NEWLINE(96, "\n", (byte) 0b0100000, DARK_MAGENTA, BLACK)
     ;
 
     private final int number;
@@ -121,7 +122,7 @@ public enum CharacterSet {
     public static PackageType[] getPackageFromChar(String c){
         for(CharacterSet characterSet : CharacterSet.values()){
             if(c.equalsIgnoreCase(";")) return new PackageType[]{CharacterSet.COMMA.getPrimary(), CharacterSet.COMMA.getSecondary()};
-            if(characterSet.getValue().equalsIgnoreCase(c)){
+            if(characterSet.getValue().equals(c)){
                 return new PackageType[]{characterSet.getPrimary(), characterSet.getSecondary()};
             }
         }
