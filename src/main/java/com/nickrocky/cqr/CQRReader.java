@@ -35,7 +35,7 @@ public class CQRReader {
 
         for(int i = 0; i < data.size(); i+=2){
             String s = CharacterSet.getFromPackage(data.get(i), data.get(i+1));
-            System.out.println("i " + i + " X: " + x + " Y: " + y + " " + data.get(i+1) + " " + data.get(i) + " : Char: " + s);
+            //System.out.println("i " + i + " X: " + x + " Y: " + y + " " + data.get(i+1) + " " + data.get(i) + " : Char: " + s);
             payload+=s;
             String nextChar = CharacterSet.getFromPackage(data.get(i+2), data.get(i+3));
             if(nextChar == "a"){

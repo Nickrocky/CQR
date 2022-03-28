@@ -48,9 +48,9 @@ public class CQRCode {
         dark_yellow_reference[3] = 50;
 
         colorInput = new PackageType[width][height];
-        System.out.println("Magenta: " + magenta_reference[0] + " " + magenta_reference[1] + " "+ magenta_reference[2] + " " + magenta_reference[3]);
-        System.out.println("Cyan: " + cyan_reference[0] + " " + cyan_reference[1] + " "+ cyan_reference[2] + " " + cyan_reference[3]);
-        System.out.println("Yellow: " + yellow_reference[0] + " " + yellow_reference[1] + " "+ yellow_reference[2] + " " + yellow_reference[3]);
+        //System.out.println("Magenta: " + magenta_reference[0] + " " + magenta_reference[1] + " "+ magenta_reference[2] + " " + magenta_reference[3]);
+        //System.out.println("Cyan: " + cyan_reference[0] + " " + cyan_reference[1] + " "+ cyan_reference[2] + " " + cyan_reference[3]);
+        //System.out.println("Yellow: " + yellow_reference[0] + " " + yellow_reference[1] + " "+ yellow_reference[2] + " " + yellow_reference[3]);
         for(int y = 0; y < qrImage.getHeight(); y++){
             for(int x = 0; x < qrImage.getWidth(); x++){
                 Color color = new Color(qrImage.getRGB(x,y));
@@ -137,7 +137,7 @@ public class CQRCode {
         }
         //if(cmyk[3] >= 30) key = 50;
 
-        System.out.println("Color: " + cyan + " " + magenta + " " + yellow + " " + key);
+        //System.out.println("Color: " + cyan + " " + magenta + " " + yellow + " " + key);
 
         if(cyan == magenta_reference[0] && magenta == magenta_reference[1] && yellow == magenta_reference[2]){
             if(key == 50) return DARK_MAGENTA;
